@@ -387,4 +387,29 @@ public class LoginTest extends BaseTest {
 
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_15: UI Verification - Verify Login page title and brand header
+     * Type: UI Verification Test
+     */
+    @Test(priority = 15, description = "TC_Login_15: Verify Login page title and brand header")
+    public void TC_Login_15_PageTitleAndBrandHeader() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(15, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(15, COL_DESC);
+        String exp  = ExcelUtils.getCellData(15, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        String title = loginPage.getPageTitle();
+        test.log(Status.INFO, "Current page title: '" + title + "'");
+
+        Assert.assertTrue(title.contains("Đăng nhập"), "Page title must contain 'Đăng nhập'");
+
+        boolean headerVisible = loginPage.isBannerHeadingDisplayed();
+        String headerText = loginPage.getBannerHeadingText();
+        test.log(Status.INFO, "Banner heading text: '" + headerText + "'");
+
+        Assert.assertTrue(headerVisible, "Brand banner heading must be displayed");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
