@@ -175,4 +175,32 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when both fields are empty");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_06: Forgot password link navigates to GetPass page
+     * Type: Navigation Test
+     */
+    @Test(priority = 6, description = "TC_Login_06: Forgot password link navigates to /Login/GetPass")
+    public void TC_Login_06_ForgotPasswordLink() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(6, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(6, COL_DESC);
+        String exp  = ExcelUtils.getCellData(6, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Verifying forgot password link is visible on login page");
+
+        boolean isVisible = loginPage.isForgotPasswordLinkVisible();
+        Assert.assertTrue(isVisible, "Forgot password link must be visible on the login page");
+
+        test.log(Status.INFO, "Clicking forgot password link...");
+        loginPage.clickForgotPassword();
+
+        String currentUrl = loginPage.getCurrentUrl();
+        test.log(Status.INFO, "URL after click: " + currentUrl);
+
+        Assert.assertTrue(currentUrl.contains("/Login/GetPass"),
+            "Must navigate to /Login/GetPass after clicking forgot password link");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
