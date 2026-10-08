@@ -203,4 +203,27 @@ public class LoginTest extends BaseTest {
             "Must navigate to /Login/GetPass after clicking forgot password link");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_07: Login fails with non-existent account
+     * Type: Negative Test
+     */
+    @Test(priority = 7, description = "TC_Login_07: Login fails with non-existent account")
+    public void TC_Login_07_NonExistentAccount() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(7, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(7, COL_DESC);
+        String user = ExcelUtils.getCellData(7, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(7, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(7, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Testing non-existent user: " + user);
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for non-existent account");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
