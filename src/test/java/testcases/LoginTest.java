@@ -129,4 +129,29 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when username is empty");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_04: Login fails when password is left empty
+     * Type: Boundary Test
+     */
+    @Test(priority = 4, description = "TC_Login_04: Login fails when password is empty")
+    public void TC_Login_04_EmptyPassword() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(4, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(4, COL_DESC);
+        String user = ExcelUtils.getCellData(4, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(4, COL_PASSWORD); // empty string
+        String exp  = ExcelUtils.getCellData(4, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "username=" + user + " | password=[empty]");
+
+        loginPage.enterUsername(user);
+        loginPage.enterPassword(pass);
+        loginPage.clickLogin();
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when password is empty");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
