@@ -341,4 +341,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must handle long string gracefully without system crash");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_13: Negative test - Password with invalid special characters
+     * Type: Negative Test
+     */
+    @Test(priority = 13, description = "TC_Login_13: Password with invalid special characters")
+    public void TC_Login_13_SpecialCharPassword() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(13, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(13, COL_DESC);
+        String user = ExcelUtils.getCellData(13, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(13, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(13, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Testing invalid password with special characters");
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for incorrect special char password");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
