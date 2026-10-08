@@ -81,4 +81,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(redirected, "Login with valid credentials must redirect away from /Login");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_02: Login fails with wrong password
+     * Type: Negative Test
+     */
+    @Test(priority = 2, description = "TC_Login_02: Login fails with wrong password")
+    public void TC_Login_02_WrongPassword() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(2, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(2, COL_DESC);
+        String user = ExcelUtils.getCellData(2, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(2, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(2, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "username=" + user + " | password=" + pass + " (incorrect)");
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when password is wrong");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
