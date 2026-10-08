@@ -364,4 +364,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for incorrect special char password");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_14: UI & Functional test - Verify 'Remember Me' checkbox toggle
+     * Type: UI / Functional Test
+     */
+    @Test(priority = 14, description = "TC_Login_14: Verify 'Remember Me' checkbox toggle")
+    public void TC_Login_14_RememberMeToggle() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(14, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(14, COL_DESC);
+        String exp  = ExcelUtils.getCellData(14, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Checking visibility of Remember Me option");
+
+        boolean isVisible = loginPage.isRememberMeVisible();
+        Assert.assertTrue(isVisible, "Remember Me option must be visible on Login form");
+
+        test.log(Status.INFO, "Clicking Remember Me option to toggle state");
+        loginPage.toggleRememberMe();
+
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
