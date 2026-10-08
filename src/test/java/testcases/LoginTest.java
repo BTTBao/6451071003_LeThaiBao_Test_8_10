@@ -318,4 +318,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for special char username");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_12: Boundary test - Overly long username string (>100 characters)
+     * Type: Boundary Test
+     */
+    @Test(priority = 12, description = "TC_Login_12: Overly long username string")
+    public void TC_Login_12_LongUsername() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(12, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(12, COL_DESC);
+        String user = ExcelUtils.getCellData(12, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(12, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(12, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Testing long username with length: " + user.length());
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must handle long string gracefully without system crash");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
