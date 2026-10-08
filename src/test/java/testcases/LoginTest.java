@@ -272,4 +272,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Application must sanitize XSS input and remain on /Login");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_10: Edge case - Username with leading/trailing spaces
+     * Type: Edge Case
+     */
+    @Test(priority = 10, description = "TC_Login_10: Username with leading/trailing spaces")
+    public void TC_Login_10_WhitespaceUsername() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(10, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(10, COL_DESC);
+        String user = ExcelUtils.getCellData(10, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(10, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(10, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Testing username with whitespace padding: '" + user + "'");
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for invalid padded username");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
