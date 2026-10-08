@@ -412,4 +412,24 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(headerVisible, "Brand banner heading must be displayed");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_16: Security test - Verify password field masks input (type='password')
+     * Type: Security Test
+     */
+    @Test(priority = 16, description = "TC_Login_16: Verify password field masks input characters")
+    public void TC_Login_16_PasswordMasking() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(16, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(16, COL_DESC);
+        String exp  = ExcelUtils.getCellData(16, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Verifying password input field masking attribute");
+
+        boolean isMasked = loginPage.isPasswordMasked();
+        Assert.assertTrue(isMasked, "Password input field attribute 'type' must be 'password'");
+
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
