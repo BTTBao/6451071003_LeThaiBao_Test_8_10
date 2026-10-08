@@ -295,4 +295,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for invalid padded username");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_11: Negative test - Username with special characters
+     * Type: Negative Test
+     */
+    @Test(priority = 11, description = "TC_Login_11: Username with special characters")
+    public void TC_Login_11_SpecialCharUsername() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(11, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(11, COL_DESC);
+        String user = ExcelUtils.getCellData(11, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(11, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(11, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Testing username with special chars: " + user);
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for special char username");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
