@@ -3,7 +3,7 @@
 - **Website:** https://vanphongdientu.utc.edu.vn/Login
 - **Framework:** Selenium WebDriver + TestNG + Maven
 - **Ngon ngu:** Java 11+ / Java 21
-- **Bao cao:** ExtentReports 5.x (HTML Report)
+- **Bao cao:** ExtentReports 5.x & Allure Report 2.x
 - **Test Data:** Apache POI - Excel (`testdata/LoginTestData.xlsx`)
 - **Tong so Test Case:** 16 Test Cases (Moi Test Case la 1 commit)
 
@@ -16,21 +16,22 @@ LoginTest/
 |   |   |   `-- LoginPage.java          # Page Object Model
 |   |   `-- utilities/
 |   |       |-- ExcelUtils.java         # Doc du lieu Excel (Apache POI)
-|   |       |-- ExtentReportManager.java # Quan ly bao cao HTML
-|   |       |-- ScreenshotUtils.java    # Chup anh man hinh khi test fail
+|   |       |-- ExtentReportManager.java # Quan ly bao cao HTML ExtentReports
+|   |       |-- ScreenshotUtils.java    # Chup va dinh kem anh (Allure + ExtentReports)
 |   |       `-- CreateTestData.java     # Script khoi tao / cap nhat du lieu Excel
 |   `-- test/java/
 |       |-- base/
 |       |   `-- BaseTest.java           # Lop nen (setup/teardown Chrome)
 |       `-- testcases/
-|           `-- LoginTest.java          # 16 test case doc tu Excel
+|           `-- LoginTest.java          # 16 test cases doc tu Excel + Allure Annotations
 |-- testdata/
 |   `-- LoginTestData.xlsx              # Du lieu test Excel tich hop san trong du an
 |-- reports/
-|   `-- TestReport.html                 # Bao cao HTML truc quan (sau khi chay)
+|   `-- TestReport.html                 # Bao cao ExtentReports HTML truc quan
 |-- screenshots/                        # Anh chup khi test that bai
-|-- testng.xml                          # Cau hinh TestNG Suite
-`-- pom.xml                             # Cau hinh Maven dependencies
+|-- allure-results/                     # Du lieu ket qua Allure sinh ra sau khi chay test
+|-- testng.xml                          # Cau hinh TestNG Suite + AllureTestNg Listener
+`-- pom.xml                             # Cau hinh Maven + Allure plugins & aspectjweaver
 ```
 
 ## Danh sach 16 Test Cases (Moi Test Case = 1 Commit rieng biet)
@@ -62,22 +63,35 @@ Nếu muốn tái tạo hoặc cập nhật file Excel theo mã nguồn:
 mvn exec:java "-Dexec.mainClass=utilities.CreateTestData"
 ```
 
-## Cach chay test
+## Cach chay test & xem bao cao
 
 ### Yeu cau truoc khi chay
 1. **Java 11+ / Java 21**
 2. **Maven 3.6+**
 3. **Google Chrome** (ChromeDriver tu dong duoc quan ly boi WebDriverManager)
 
-### Chay tat ca 16 test cases
+### 1. Chay test
 ```bash
+# Chay toan bo 16 test cases
 mvn test
-```
 
-### Chay mot test case cu the
-```bash
+# Hoac chay 1 test case cu the
 mvn test -Dtest="LoginTest#TC_Login_16_PasswordMasking"
 ```
 
-### Xem bao cao ExtentReports
-Mo file `reports/TestReport.html` trong trinh duyet (Chrome/Edge).
+### 2. Xem bao cao ExtentReports
+Mo file `reports/TestReport.html` trong trinh duyet (Chrome/Edge):
+```bash
+Start-Process "reports\TestReport.html"
+```
+
+### 3. Xem bao cao Allure Report
+Sau khi chạy test, thư mục `allure-results/` được tự động tạo chứa dữ liệu chi tiết của từng bước chạy, severity, story, và screenshot.
+Để mở giao diện Allure Report trên trình duyệt:
+```bash
+# Cach 1: Dung Allure CLI
+allure serve allure-results
+
+# Cach 2: Dung Maven Allure Plugin
+mvn allure:serve
+```

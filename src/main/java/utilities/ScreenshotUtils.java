@@ -1,5 +1,6 @@
 package utilities;
 
+import io.qameta.allure.Attachment;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -11,9 +12,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * ScreenshotUtils: Chup anh man hinh khi test that bai
+ * ScreenshotUtils: Chup anh man hinh khi test that bai va dinh kem vao Allure / ExtentReports
  */
 public class ScreenshotUtils {
+
     public static String takeScreenshot(WebDriver driver, String testName) {
         String ts  = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String dir = System.getProperty("user.dir") + "/screenshots/";
@@ -26,5 +28,17 @@ public class ScreenshotUtils {
             System.err.println("Loi chup anh: " + e.getMessage());
         }
         return filePath;
+    }
+
+    @Attachment(value = "Failure Screenshot ({testName})", type = "image/png")
+    public static byte[] captureScreenshotToAllure(WebDriver driver, String testName) {
+        if (driver != null) {
+            try {
+                return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            } catch (Exception e) {
+                System.err.println("Loi capture Allure screenshot: " + e.getMessage());
+            }
+        }
+        return new byte[0];
     }
 }

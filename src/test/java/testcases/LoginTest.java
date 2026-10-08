@@ -4,6 +4,7 @@ import base.BaseTest;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import io.qameta.allure.*;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -14,9 +15,12 @@ import utilities.ScreenshotUtils;
 import java.io.IOException;
 
 /**
- * LoginTest - Automation test suite for Login module
+ * LoginTest - Automation test suite for Login module (16 Test Cases)
  * App: https://vanphongdientu.utc.edu.vn/Login
+ * Integrated with ExtentReports 5 & Allure Report
  */
+@Epic("UTC Office Portal")
+@Feature("Authentication & Login Module")
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
     private ExtentReports extent;
@@ -31,22 +35,30 @@ public class LoginTest extends BaseTest {
     private static final int COL_EXPECTED  = 4;
 
     @BeforeSuite(alwaysRun = true)
-    public void initReport() { extent = ExtentReportManager.getInstance(); }
+    public void initReport() {
+        extent = ExtentReportManager.getInstance();
+    }
 
     @BeforeMethod(alwaysRun = true)
     @Override
-    public void setUp() { super.setUp(); loginPage = new LoginPage(driver); }
+    public void setUp() {
+        super.setUp();
+        loginPage = new LoginPage(driver);
+    }
 
     @AfterMethod(alwaysRun = true)
     public void captureResult(ITestResult result) {
-        if (result.getStatus() == ITestResult.FAILURE) {
-            test.log(Status.FAIL, "FAILED: " + result.getThrowable().getMessage());
-            test.addScreenCaptureFromPath(
-                ScreenshotUtils.takeScreenshot(driver, result.getName()), "Screenshot");
-        } else if (result.getStatus() == ITestResult.SUCCESS) {
-            test.log(Status.PASS, "PASSED");
-        } else {
-            test.log(Status.SKIP, "SKIPPED");
+        if (test != null) {
+            if (result.getStatus() == ITestResult.FAILURE) {
+                test.log(Status.FAIL, "FAILED: " + (result.getThrowable() != null ? result.getThrowable().getMessage() : "Unknown error"));
+                test.addScreenCaptureFromPath(
+                    ScreenshotUtils.takeScreenshot(driver, result.getName()), "Failure Screenshot");
+                ScreenshotUtils.captureScreenshotToAllure(driver, result.getName());
+            } else if (result.getStatus() == ITestResult.SUCCESS) {
+                test.log(Status.PASS, "PASSED");
+            } else {
+                test.log(Status.SKIP, "SKIPPED");
+            }
         }
         super.tearDown();
     }
@@ -55,6 +67,7 @@ public class LoginTest extends BaseTest {
     public void generateReport() {
         ExtentReportManager.flushReports();
         System.out.println("==> Report saved: reports/TestReport.html");
+        System.out.println("==> Allure results saved in: allure-results/");
     }
 
     /**
@@ -62,6 +75,9 @@ public class LoginTest extends BaseTest {
      * Type: Positive Test
      */
     @Test(priority = 1, description = "TC_Login_01: Login succeeds with valid credentials")
+    @Story("Positive Login")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Verify that valid username and password allow user to log in successfully and redirect to Dashboard.")
     public void TC_Login_01_ValidLogin() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(1, COL_TC_ID);
@@ -87,6 +103,9 @@ public class LoginTest extends BaseTest {
      * Type: Negative Test
      */
     @Test(priority = 2, description = "TC_Login_02: Login fails with wrong password")
+    @Story("Invalid Credentials")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Verify that an error occurs and user stays on login page when an incorrect password is entered.")
     public void TC_Login_02_WrongPassword() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(2, COL_TC_ID);
@@ -110,11 +129,14 @@ public class LoginTest extends BaseTest {
      * Type: Boundary Test
      */
     @Test(priority = 3, description = "TC_Login_03: Login fails when username is empty")
+    @Story("Empty Fields Validation")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that login fails when username is left blank.")
     public void TC_Login_03_EmptyUsername() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(3, COL_TC_ID);
         String desc = ExcelUtils.getCellData(3, COL_DESC);
-        String user = ExcelUtils.getCellData(3, COL_USERNAME); // empty string
+        String user = ExcelUtils.getCellData(3, COL_USERNAME);
         String pass = ExcelUtils.getCellData(3, COL_PASSWORD);
         String exp  = ExcelUtils.getCellData(3, COL_EXPECTED);
 
@@ -135,12 +157,15 @@ public class LoginTest extends BaseTest {
      * Type: Boundary Test
      */
     @Test(priority = 4, description = "TC_Login_04: Login fails when password is empty")
+    @Story("Empty Fields Validation")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that login fails when password is left blank.")
     public void TC_Login_04_EmptyPassword() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(4, COL_TC_ID);
         String desc = ExcelUtils.getCellData(4, COL_DESC);
         String user = ExcelUtils.getCellData(4, COL_USERNAME);
-        String pass = ExcelUtils.getCellData(4, COL_PASSWORD); // empty string
+        String pass = ExcelUtils.getCellData(4, COL_PASSWORD);
         String exp  = ExcelUtils.getCellData(4, COL_EXPECTED);
 
         test = extent.createTest(tcId, desc);
@@ -160,6 +185,9 @@ public class LoginTest extends BaseTest {
      * Type: Boundary Test
      */
     @Test(priority = 5, description = "TC_Login_05: Login fails when both fields are empty")
+    @Story("Empty Fields Validation")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that clicking login with both fields empty keeps the user on login page.")
     public void TC_Login_05_BothFieldsEmpty() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(5, COL_TC_ID);
@@ -181,6 +209,9 @@ public class LoginTest extends BaseTest {
      * Type: Navigation Test
      */
     @Test(priority = 6, description = "TC_Login_06: Forgot password link navigates to /Login/GetPass")
+    @Story("Forgot Password")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that clicking 'Forgot Password' link navigates properly to /Login/GetPass.")
     public void TC_Login_06_ForgotPasswordLink() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(6, COL_TC_ID);
@@ -209,6 +240,9 @@ public class LoginTest extends BaseTest {
      * Type: Negative Test
      */
     @Test(priority = 7, description = "TC_Login_07: Login fails with non-existent account")
+    @Story("Invalid Credentials")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Verify that attempting login with non-existent username fails safely.")
     public void TC_Login_07_NonExistentAccount() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(7, COL_TC_ID);
@@ -232,6 +266,9 @@ public class LoginTest extends BaseTest {
      * Type: Security Test
      */
     @Test(priority = 8, description = "TC_Login_08: Security test - SQL Injection in username")
+    @Story("Security Testing")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Verify that application resists SQL Injection authentication bypass payloads.")
     public void TC_Login_08_SQLInjection() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(8, COL_TC_ID);
@@ -255,6 +292,9 @@ public class LoginTest extends BaseTest {
      * Type: Security Test
      */
     @Test(priority = 9, description = "TC_Login_09: Security test - XSS payload in username")
+    @Story("Security Testing")
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Verify that application sanitizes XSS script input and does not execute scripts.")
     public void TC_Login_09_XSSInjection() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(9, COL_TC_ID);
@@ -278,6 +318,9 @@ public class LoginTest extends BaseTest {
      * Type: Edge Case
      */
     @Test(priority = 10, description = "TC_Login_10: Username with leading/trailing spaces")
+    @Story("Input Sanitization")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Verify behavior when username contains leading or trailing whitespaces.")
     public void TC_Login_10_WhitespaceUsername() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(10, COL_TC_ID);
@@ -301,6 +344,9 @@ public class LoginTest extends BaseTest {
      * Type: Negative Test
      */
     @Test(priority = 11, description = "TC_Login_11: Username with special characters")
+    @Story("Invalid Credentials")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that username containing invalid special characters is rejected.")
     public void TC_Login_11_SpecialCharUsername() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(11, COL_TC_ID);
@@ -324,6 +370,9 @@ public class LoginTest extends BaseTest {
      * Type: Boundary Test
      */
     @Test(priority = 12, description = "TC_Login_12: Overly long username string")
+    @Story("Boundary Stress")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that long username input is handled gracefully without crashing the portal.")
     public void TC_Login_12_LongUsername() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(12, COL_TC_ID);
@@ -347,6 +396,9 @@ public class LoginTest extends BaseTest {
      * Type: Negative Test
      */
     @Test(priority = 13, description = "TC_Login_13: Password with invalid special characters")
+    @Story("Invalid Credentials")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that an invalid password with special characters is rejected.")
     public void TC_Login_13_SpecialCharPassword() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(13, COL_TC_ID);
@@ -370,6 +422,9 @@ public class LoginTest extends BaseTest {
      * Type: UI / Functional Test
      */
     @Test(priority = 14, description = "TC_Login_14: Verify 'Remember Me' checkbox toggle")
+    @Story("UI Verification")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Verify that 'Remember Me' checkbox is visible and can be toggled by the user.")
     public void TC_Login_14_RememberMeToggle() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(14, COL_TC_ID);
@@ -393,6 +448,9 @@ public class LoginTest extends BaseTest {
      * Type: UI Verification Test
      */
     @Test(priority = 15, description = "TC_Login_15: Verify Login page title and brand header")
+    @Story("UI Verification")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Verify that the page title matches 'Đăng nhập' and the branding caption header is present.")
     public void TC_Login_15_PageTitleAndBrandHeader() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(15, COL_TC_ID);
@@ -418,6 +476,9 @@ public class LoginTest extends BaseTest {
      * Type: Security Test
      */
     @Test(priority = 16, description = "TC_Login_16: Verify password field masks input characters")
+    @Story("Security Testing")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Verify that the password input element has type='password' to mask sensitive characters.")
     public void TC_Login_16_PasswordMasking() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(16, COL_TC_ID);

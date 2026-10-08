@@ -1,6 +1,8 @@
-﻿target/
+target/
 reports/TestReport.html
 screenshots/
+allure-results/
+allure-report/
 *.class
 .idea/
 *.iml
