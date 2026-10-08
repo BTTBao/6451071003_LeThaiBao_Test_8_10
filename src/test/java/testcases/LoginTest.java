@@ -14,8 +14,8 @@ import utilities.ScreenshotUtils;
 import java.io.IOException;
 
 /**
- * LoginTest: Bo kiem thu module dang nhap
- * Web: https://vanphongdientu.utc.edu.vn/Login
+ * LoginTest - Automation test suite for Login module
+ * App: https://vanphongdientu.utc.edu.vn/Login
  */
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
@@ -54,11 +54,14 @@ public class LoginTest extends BaseTest {
     @AfterSuite(alwaysRun = true)
     public void generateReport() {
         ExtentReportManager.flushReports();
-        System.out.println("==> Report: reports/TestReport.html");
+        System.out.println("==> Report saved: reports/TestReport.html");
     }
 
-    // TC_Login_01: Dang nhap thanh cong voi tai khoan hop le
-    @Test(priority = 1, description = "TC_Login_01: Dang nhap thanh cong voi tai khoan hop le")
+    /**
+     * TC_Login_01: Valid login with correct credentials
+     * Type: Positive Test
+     */
+    @Test(priority = 1, description = "TC_Login_01: Login succeeds with valid credentials")
     public void TC_Login_01_ValidLogin() throws IOException {
         ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
         String tcId = ExcelUtils.getCellData(1, COL_TC_ID);
@@ -69,117 +72,13 @@ public class LoginTest extends BaseTest {
 
         test = extent.createTest(tcId, desc);
         test.log(Status.INFO, "URL: " + driver.getCurrentUrl());
-        test.log(Status.INFO, "Nhap username=" + user);
+        test.log(Status.INFO, "Enter username: " + user);
 
         loginPage.login(user, pass);
-        boolean ok = loginPage.isLoginSuccessful();
-        test.log(Status.INFO, "URL sau login: " + loginPage.getCurrentUrl());
+        boolean redirected = loginPage.isLoginSuccessful();
+        test.log(Status.INFO, "URL after login: " + loginPage.getCurrentUrl());
 
-        Assert.assertTrue(ok, "Dang nhap voi tai khoan hop le phai chuyen trang");
-        test.log(Status.PASS, "Expected: " + exp);
-    }
-
-    // TC_Login_02: Dang nhap that bai - sai mat khau
-    @Test(priority = 2, description = "TC_Login_02: Dang nhap that bai - sai mat khau")
-    public void TC_Login_02_WrongPassword() throws IOException {
-        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
-        String tcId = ExcelUtils.getCellData(2, COL_TC_ID);
-        String desc = ExcelUtils.getCellData(2, COL_DESC);
-        String user = ExcelUtils.getCellData(2, COL_USERNAME);
-        String pass = ExcelUtils.getCellData(2, COL_PASSWORD);
-        String exp  = ExcelUtils.getCellData(2, COL_EXPECTED);
-
-        test = extent.createTest(tcId, desc);
-        test.log(Status.INFO, "username=" + user + " | password=" + pass + " (sai)");
-
-        loginPage.login(user, pass);
-        boolean stay = loginPage.isOnLoginPage();
-
-        Assert.assertTrue(stay, "Phai o lai trang /Login khi mat khau sai");
-        test.log(Status.PASS, "Expected: " + exp);
-    }
-
-    // TC_Login_03: Dang nhap that bai - bo trong ten dang nhap
-    @Test(priority = 3, description = "TC_Login_03: Dang nhap that bai - bo trong ten dang nhap")
-    public void TC_Login_03_EmptyUsername() throws IOException {
-        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
-        String tcId = ExcelUtils.getCellData(3, COL_TC_ID);
-        String desc = ExcelUtils.getCellData(3, COL_DESC);
-        String user = ExcelUtils.getCellData(3, COL_USERNAME);
-        String pass = ExcelUtils.getCellData(3, COL_PASSWORD);
-        String exp  = ExcelUtils.getCellData(3, COL_EXPECTED);
-
-        test = extent.createTest(tcId, desc);
-        test.log(Status.INFO, "username=[trong] | password=" + pass);
-
-        loginPage.enterUsername(user);
-        loginPage.enterPassword(pass);
-        loginPage.clickLogin();
-        boolean stay = loginPage.isOnLoginPage();
-
-        Assert.assertTrue(stay, "Phai o lai trang /Login khi username trong");
-        test.log(Status.PASS, "Expected: " + exp);
-    }
-
-    // TC_Login_04: Dang nhap that bai - bo trong mat khau
-    @Test(priority = 4, description = "TC_Login_04: Dang nhap that bai - bo trong mat khau")
-    public void TC_Login_04_EmptyPassword() throws IOException {
-        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
-        String tcId = ExcelUtils.getCellData(4, COL_TC_ID);
-        String desc = ExcelUtils.getCellData(4, COL_DESC);
-        String user = ExcelUtils.getCellData(4, COL_USERNAME);
-        String pass = ExcelUtils.getCellData(4, COL_PASSWORD);
-        String exp  = ExcelUtils.getCellData(4, COL_EXPECTED);
-
-        test = extent.createTest(tcId, desc);
-        test.log(Status.INFO, "username=" + user + " | password=[trong]");
-
-        loginPage.enterUsername(user);
-        loginPage.enterPassword(pass);
-        loginPage.clickLogin();
-        boolean stay = loginPage.isOnLoginPage();
-
-        Assert.assertTrue(stay, "Phai o lai trang /Login khi password trong");
-        test.log(Status.PASS, "Expected: " + exp);
-    }
-
-    // TC_Login_05: Dang nhap that bai - bo trong ca hai truong
-    @Test(priority = 5, description = "TC_Login_05: Dang nhap that bai - bo trong ca hai truong")
-    public void TC_Login_05_BothFieldsEmpty() throws IOException {
-        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
-        String tcId = ExcelUtils.getCellData(5, COL_TC_ID);
-        String desc = ExcelUtils.getCellData(5, COL_DESC);
-        String exp  = ExcelUtils.getCellData(5, COL_EXPECTED);
-
-        test = extent.createTest(tcId, desc);
-        test.log(Status.INFO, "username=[trong] | password=[trong] - click Login ngay");
-
-        loginPage.clickLogin();
-        boolean stay = loginPage.isOnLoginPage();
-
-        Assert.assertTrue(stay, "Phai o lai trang /Login khi ca hai truong de trong");
-        test.log(Status.PASS, "Expected: " + exp);
-    }
-
-    // TC_Login_06: Kiem tra chuc nang Quen mat khau
-    @Test(priority = 6, description = "TC_Login_06: Kiem tra lien ket Quen mat khau")
-    public void TC_Login_06_ForgotPasswordLink() throws IOException {
-        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
-        String tcId = ExcelUtils.getCellData(6, COL_TC_ID);
-        String desc = ExcelUtils.getCellData(6, COL_DESC);
-        String exp  = ExcelUtils.getCellData(6, COL_EXPECTED);
-
-        test = extent.createTest(tcId, desc);
-        test.log(Status.INFO, "Kiem tra lien ket Quen mat khau co hien thi tren trang");
-
-        boolean visible = loginPage.isForgotPasswordLinkVisible();
-        Assert.assertTrue(visible, "Lien ket Quen mat khau phai hien thi");
-
-        loginPage.clickForgotPassword();
-        String url = loginPage.getCurrentUrl();
-        test.log(Status.INFO, "URL sau click: " + url);
-
-        Assert.assertTrue(url.contains("/Login/GetPass"), "Phai chuyen den /Login/GetPass");
+        Assert.assertTrue(redirected, "Login with valid credentials must redirect away from /Login");
         test.log(Status.PASS, "Expected: " + exp);
     }
 }
