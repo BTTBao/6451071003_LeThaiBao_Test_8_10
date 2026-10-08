@@ -15,11 +15,12 @@ public class LoginPage {
     private WebDriver driver;
     private WebDriverWait wait;
 
-    private final By usernameField = By.name("username");
-    private final By passwordField = By.name("userpwd");
-    private final By loginButton   = By.cssSelector("input.submit_login");
+    private final By usernameField   = By.name("username");
+    private final By passwordField   = By.name("userpwd");
+    private final By loginButton     = By.cssSelector("input.submit_login");
     private final By rememberMeLabel = By.cssSelector("label[for='persistent']");
     private final By forgotPassLink  = By.cssSelector("a[href='/Login/GetPass']");
+    private final By bannerHeading   = By.cssSelector(".caption h1");
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
@@ -75,5 +76,42 @@ public class LoginPage {
 
     public void clickForgotPassword() {
         wait.until(ExpectedConditions.elementToBeClickable(forgotPassLink)).click();
+    }
+
+    public boolean isPasswordMasked() {
+        try {
+            WebElement pw = driver.findElement(passwordField);
+            return "password".equalsIgnoreCase(pw.getAttribute("type"));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isRememberMeVisible() {
+        try {
+            return driver.findElement(rememberMeLabel).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void toggleRememberMe() {
+        wait.until(ExpectedConditions.elementToBeClickable(rememberMeLabel)).click();
+    }
+
+    public boolean isBannerHeadingDisplayed() {
+        try {
+            return driver.findElement(bannerHeading).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getBannerHeadingText() {
+        try {
+            return driver.findElement(bannerHeading).getText();
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

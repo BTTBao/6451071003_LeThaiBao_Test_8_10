@@ -20,6 +20,7 @@ public class BaseTest {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
         options.addArguments("--disable-notifications");
+        options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
         driver.get(BASE_URL);
     }
