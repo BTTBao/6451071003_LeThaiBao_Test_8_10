@@ -1,0 +1,9 @@
+﻿target/
+reports/TestReport.html
+screenshots/
+*.class
+.idea/
+*.iml
+.settings/
+.classpath
+.project
