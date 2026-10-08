@@ -154,4 +154,25 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when password is empty");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_05: Login fails when both username and password are empty
+     * Type: Boundary Test
+     */
+    @Test(priority = 5, description = "TC_Login_05: Login fails when both fields are empty")
+    public void TC_Login_05_BothFieldsEmpty() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(5, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(5, COL_DESC);
+        String exp  = ExcelUtils.getCellData(5, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "username=[empty] | password=[empty] - clicking Login directly");
+
+        loginPage.clickLogin();
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page when both fields are empty");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
