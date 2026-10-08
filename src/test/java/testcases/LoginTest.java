@@ -226,4 +226,27 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(stayOnLoginPage, "Must remain on /Login page for non-existent account");
         test.log(Status.PASS, "Expected: " + exp);
     }
+
+    /**
+     * TC_Login_08: Security test - SQL Injection in username field
+     * Type: Security Test
+     */
+    @Test(priority = 8, description = "TC_Login_08: Security test - SQL Injection in username")
+    public void TC_Login_08_SQLInjection() throws IOException {
+        ExcelUtils.setExcelFile(EXCEL_PATH, SHEET_NAME);
+        String tcId = ExcelUtils.getCellData(8, COL_TC_ID);
+        String desc = ExcelUtils.getCellData(8, COL_DESC);
+        String user = ExcelUtils.getCellData(8, COL_USERNAME);
+        String pass = ExcelUtils.getCellData(8, COL_PASSWORD);
+        String exp  = ExcelUtils.getCellData(8, COL_EXPECTED);
+
+        test = extent.createTest(tcId, desc);
+        test.log(Status.INFO, "Injecting SQL payload into username: " + user);
+
+        loginPage.login(user, pass);
+        boolean stayOnLoginPage = loginPage.isOnLoginPage();
+
+        Assert.assertTrue(stayOnLoginPage, "Application must safely block SQL injection attempt");
+        test.log(Status.PASS, "Expected: " + exp);
+    }
 }
